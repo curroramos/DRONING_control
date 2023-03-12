@@ -18,11 +18,11 @@ deadZone =100
 frameWidth = width
 frameHeight = height
 
-
 # Variable global para la imagen
 global imgContour
 
-# Contadores para control de dron 
+# Contadores para control de dron
+startCounter = 0
 cnt_sec = 0
 num_puertas = 0
 
