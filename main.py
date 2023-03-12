@@ -6,7 +6,7 @@ from control_utils import *
 
 ##################
 using_tello = 0 # poner a 1 si se tiene el dron
-tello_cam = 0 # poner a 1 si se tiene el dron y sólo se quiere usar la cámara
+tello_cam = 1 # poner a 1 si se tiene el dron y sólo se quiere usar la cámara
 detector = 0 # 0: color, 1: mano
 num_total_puertas = 1 # número total de puertas en el circuito  
 ##################

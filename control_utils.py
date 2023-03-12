@@ -32,7 +32,7 @@ def direction_control(cx,cy,object_detected, frameWidth, frameHeight, deadZone, 
 
     return dir
 
-def movement_control(drone, dir, contador_securidad, num_puertas):
+def movement_control(drone, dir, contador_seguridad, num_puertas):
     if contador_seguridad < 0:
         contador_seguridad = 0
     elif contador_seguridad > 11:
