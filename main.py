@@ -7,17 +7,24 @@ from control_utils import *
 ##################
 using_tello = 0 # poner a 1 si se tiene el dron
 tello_cam = 0 # poner a 1 si se tiene el dron y sólo se quiere usar la cámara
+detector = 0 # 0: color, 1: mano
+num_total_puertas = 1 # número total de puertas en el circuito  
 ##################
 
-# Image configuration
+# Configuración de imagen
 width = 640 
 height = 480  
 deadZone =100
 frameWidth = width
 frameHeight = height
 
+
 # Variable global para la imagen
 global imgContour
+
+# Contadores para control de dron 
+cnt_sec = 0
+num_puertas = 0
 
 # Conectar dron
 if using_tello or tello_cam:
@@ -39,9 +46,9 @@ else:
     drone.streamoff()
     drone.streamon()
 
-
 # Crear ventana con trackbars
-create_trackbar(empty)
+if detector == 0:
+    create_trackbar(empty)
 
 # Bucle principal
 while True:
@@ -56,13 +63,18 @@ while True:
 
     imgContour = img.copy()
     
-    # Usar trackbars y filtros para preprocesamiento de imagen
-    result, imgDil = procesamiento_imagen(img)
+    # Uso de detector
+    if detector == 0:
+        # Usar trackbars y filtros para preprocesamiento de imagen
+        result, imgDil = procesamiento_imagen(img)
 
-    # Detección de contornos
-    cx,cy,object_detected = getContours(imgDil, imgContour, frameWidth, frameHeight, deadZone)
-    display(imgContour, frameWidth, frameHeight, deadZone)
-    print(cx, cy, object_detected)
+        # Detección de contornos
+        cx,cy,object_detected = getContours(imgDil, imgContour, frameWidth, frameHeight, deadZone)
+        display(imgContour, frameWidth, frameHeight, deadZone)
+        print(cx, cy, object_detected)
+
+    elif detector ==1:
+        pass
 
     # Control de dirección
     dir = direction_control(cx,cy,object_detected, frameWidth, frameHeight, deadZone, imgContour)
@@ -75,15 +87,17 @@ while True:
             drone.takeoff()
             startCounter = 1
         # Actuar según dirección del objeto detectado
-        movement_control(drone, dir)
+        cnt_sec, num_puertas = movement_control(drone, dir, cnt_sec, num_puertas)
+    else:
+        cnt_sec, num_puertas = movement_control_sim(dir,cnt_sec, num_puertas)
 
     # Display 
     stack = stackImages(0.9, ([img, result], [imgDil, imgContour]))
     cv2.imshow('Horizontal Stacking', stack)
 
-    if cv2.waitKey(1) & 0xFF == ord('q'):
+    if cv2.waitKey(1) & 0xFF == ord('q') or num_puertas==num_total_puertas:
         if using_tello:
-            # Aterrizaje de emergencia
+            # Aterrizaje y fin de misión
             drone.land()
         break
 
