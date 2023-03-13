@@ -74,6 +74,7 @@ while True:
         print(cx, cy, object_detected)
 
     elif detector ==1:
+        # Implementar detector de mano, cara, cuerpo
         pass
 
     # Control de dirección
@@ -92,8 +93,9 @@ while True:
         cnt_sec, num_puertas = movement_control_sim(dir,cnt_sec, num_puertas)
 
     # Display 
-    stack = stackImages(0.9, ([img, result], [imgDil, imgContour]))
-    cv2.imshow('Horizontal Stacking', stack)
+    if detector == 0:
+        stack = stackImages(0.9, ([img, result], [imgDil, imgContour]))
+        cv2.imshow('Horizontal Stacking', stack)
 
     if cv2.waitKey(1) & 0xFF == ord('q') or num_puertas==num_total_puertas:
         if using_tello:
